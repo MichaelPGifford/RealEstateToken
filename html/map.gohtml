@@ -1,0 +1,145 @@
+{{ define "homepage" }}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+    	<script type='text/javascript'>
+	var map, searchManager;
+
+    	function GetMap()
+    	{
+		var myStyle = {
+            "elements": {
+                "water": { "fillColor": "#b1bdd7" },
+                "waterPoint": { "iconColor": "#a1e0ff" },
+                
+                "road": { "strokeColor": "#e6e5e4" },
+                
+                
+                
+                
+		"airport": { "fillColor": "e3e2de" },
+		"education": { "fillColor": "e7ebc4" },
+			
+		
+                
+                
+                
+            },
+            "version": "1.0" 
+        };
+        	map = new Microsoft.Maps.Map('#myMap', {
+			credentials: 'Akpb2n3B-I_jM3__sHZwT7R_5hPiX7X8M31UajNLjTvl9KoZrj_Ns_6cqX_HVBnT',
+			customMapStyle: myStyle,
+			mapTypeId: Microsoft.Maps.MapTypeId.aerial,
+			enableClickableLogo: false
+		});
+
+        	//Add your post map load code here.
+
+		Microsoft.Maps.loadModule(['Microsoft.Maps.AutoSuggest','Microsoft.Maps.Search'], function()
+		{
+			var manager = new Microsoft.Maps.AutosuggestManager({ map: map });
+			manager.attachAutosuggest('#searchBox', '#searchBoxContainer', suggestionSelected);
+			searchManager = new Microsoft.Maps.Search.SearchManager(map);
+		});
+		var layer = new Microsoft.Maps.Layer();
+		$.get("/api/get-pins", function(data,status){
+      			for(i = 0; i<data.length;i++){
+				
+				var loc = new Microsoft.Maps.Location(data[i].Latitude, data[i].Longitude);
+				
+				var pin = new Microsoft.Maps.Pushpin(loc,{
+					title: data[i].Price,
+					color: '#0074e4',
+					catId: i
+				});
+			
+				layer.add(pin);
+				Microsoft.Maps.Events.addHandler(pin, 'click', function (e) {
+					id = e.target._options.catId;
+					pin_click(data[id]);
+				});
+			}
+  		});
+
+		
+		map.layers.insert(layer);
+		
+
+    	}
+
+	function suggestionSelected(result) {
+		
+		map.setView({ bounds: result.bestView });
+
+	}
+
+	function geocode() {
+		var query = document.getElementById('searchBox').value;
+		var searchRequest = {
+			where: query,
+			callback: function(r) {
+				if(r && r.results && r.results.length > 0){
+					map.setView({ bounds: r.results[0].bestView });
+				}
+			},
+			errorCallback: function(e) {
+				alert("No results found.");
+			}
+		};
+		searchManager.geocode(searchRequest);
+	}
+	function get_pins() {
+		$.get("/api/get-pins", function(data,status){
+      			return data;
+  		});
+	}
+
+	function pin_click(data){
+		$('.overlay').show();
+		$('.pinpopup').show();
+		console.log(data);
+		$('.pinPopupAddress').html(data["Address"]);
+		$('.pinPopupPrice').html(data["Price"]);
+		$('.pinPopupContractAddress').html(data["ContractAddress"])
+	}
+	$(document).ready(function(){
+	$('.closeBtn').click(function(){
+		$('.overlay').hide();
+		$('.pinpopup').hide();
+		
+	});
+	});
+
+    	</script>
+	<script type='text/javascript'
+            src='http://www.bing.com/api/maps/mapcontrol?callback=GetMap&branch=release&key=[Akpb2n3B-I_jM3__sHZwT7R_5hPiX7X8M31UajNLjTvl9KoZrj_Ns_6cqX_HVBnT]' 
+            async defer>
+	</script>
+	
+</head>
+<body style="margin:0px;">
+	<div class="overlay" style="background-color:rgba(0, 0, 0, 0.6);height:100%;width:100%;position:fixed;z-index:99;display:none;"></div>
+	<div class="pinpopup" style="background-color:rgba(255, 255, 255, 0.97);height:80%;width:80%;position:fixed;z-index:99;display:none;top:10%;margin-left:10%;">
+		<img class="closeBtn" style="width:2%; float:right;margin-right:1%;margin-top:0.5%;cursor:pointer;" src="/images/close.svg"></img>
+		<div class="pinPopupAddress" style="text-align:center;font-size:1.9em;margin-top:5%;"></div>
+		<div style="margin-left:10%;margin-top:10%;font-size:1.2em;">Price: <span class="pinPopupPrice"></span></div>
+		<div style="margin-left:10%;font-size:1.2em;">Contract Address: <span class="pinPopupContractAddress"></span></div>
+		
+		
+
+	</div>
+	<div id='searchBoxContainer'>
+		<input type='text' id='searchBox' />
+		<input type='button' value='Search' onclick='geocode()' />
+	</div><br>
+
+	<div id="myMap" style='position:relative;width:100%;height:900px;margin:0px;padding:0px;'></div>
+	
+	
+</body>
+</html>
+{{ end }}

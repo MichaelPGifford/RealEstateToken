@@ -1,0 +1,65 @@
+{{ define "admin-add-pins" }}
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script>
+$(document).ready(function(){
+		$('#addProperty').click(function(){
+			var coords = null;
+			document.getElementById('Address').value.replace("","%20");
+			$.get("http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=US&adminDistrict="+$('#State').val()+"&locality="+$('#City').val()+"&postalCode="+$('#Zipcode').val()+"&addressLine="+$('#Address').val()+"&key=Akpb2n3B-I_jM3__sHZwT7R_5hPiX7X8M31UajNLjTvl9KoZrj_Ns_6cqX_HVBnT", function(data){
+				
+				coords = data.resourceSets["0"].resources["0"].point.coordinates;
+				var data = {
+					"address": $('#Address').val(),
+					"city": $('#City').val(),
+					"state": $('#State').val(),
+					"zipcode": $('#Zipcode').val(),
+					"price": $('#Price').val(),
+					"sqft": $('#Sqft').val(), 
+					"class":$('#Class').val(),
+					"latitude": coords[0],
+					"longitude": coords[1]
+				};
+				
+				$.ajax({
+  					type: "POST",
+  					url: "/api/add-pin",
+  					contentType: "json",
+  					data: JSON.stringify(data),
+  					success: function(response){
+  					
+  					}
+  				});
+			});
+			
+			
+			
+			
+		});
+});
+	</script>
+</head>
+<body>
+	<h1>
+		Add A Commercial Property To The Map
+	</h1>
+	<label>Address:</label><br>
+	<input id='Address' type='text' /><br><br>
+	<label>City:</label><br>
+	<input id='City' type='text' /><br><br>
+	<label>State:</label><br>
+	<input id='State' type='text' /><br><br>
+	<label>Zipcode:</label><br>
+	<input id='Zipcode' type='text' /><br><br>
+	<label>Price:</label><br>
+	<input id='Price' type='text' /><br><br>
+	<label>Sqft:</label><br>
+	<input id='Sqft' type='text' /><br><br>
+	<label>Class:</label><br>
+	<input id='Class' type='text' /><br><br>
+	<button id='addProperty'>Add</button>
+</body>
+</html>
+{{ end }}
