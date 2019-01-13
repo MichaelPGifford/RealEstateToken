@@ -1,0 +1,13 @@
+.signInPopup{
+    background-color:rgba(255, 255, 255, 0.97);
+    height:80%;
+    width:80%;
+    position:fixed;
+    z-index:99;display:none;
+    top:10%;
+    margin-left:10%;
+}
+.dropdown-content li>a, .dropdown-content li>span {
+    font-size:15px !important;
+}
+

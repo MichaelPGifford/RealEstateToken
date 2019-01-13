@@ -1,0 +1,26 @@
+.sign-in {
+    color:#4f5bfc;
+    font-size:1.25em;
+    border:0px solid #4f5bfc;
+    background-color:#fff;
+    float:right;
+    width:100%;
+    padding-left:10%;
+    padding-right:10%;
+    padding-top:6%; 
+    padding-bottom:6%;
+    z-index: 99;
+    border:1px solid #929fff;
+    cursor: pointer;
+}
+.sign-in:hover{
+    color:#4f5bfc;
+    border:1px solid #4f5bfc;
+}
+.sign-in:focus{
+    background-color:#fff;
+}
+
+.sign-in-container:active{
+    box-shadow: 0 0.5px 3px rgba(0, 0, 0, .5);
+}

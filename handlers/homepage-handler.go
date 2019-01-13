@@ -6,7 +6,7 @@ import(
 	"html/template"
 	"path/filepath"
 	"github.com/julienschmidt/httprouter"
-	"github.com/zcaps/mich.ly/cookies"
+	
 
 	"io/ioutil"
 	"strings"
@@ -15,7 +15,7 @@ import(
 
 
 func Homepage_Handler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	cookies.Visitor(w,r)
+	
 	absPath, _ := filepath.Abs("html/map.gohtml")
 	
 	tpl, err := template.ParseFiles(absPath)
@@ -27,6 +27,23 @@ func Homepage_Handler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	
 
 	err = tpl.ExecuteTemplate(w, "homepage", nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+func BalanceHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	
+	absPath, _ := filepath.Abs("html/balance.gohtml")
+	
+	tpl, err := template.ParseFiles(absPath)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	//get the html data from mongodb
+	
+
+	err = tpl.ExecuteTemplate(w, "balance", nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
