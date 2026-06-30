@@ -1,0 +1,6 @@
+
+# secrets / keys (never commit)
+tokens/contracts/credentials
+*.key
+credentials
+.env
